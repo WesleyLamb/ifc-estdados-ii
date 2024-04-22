@@ -103,7 +103,7 @@ int main(){
     // printf("\n");
 
     printf("Remove: ");
-    treeRemove(node, treeSearch(node, 7));
+    treeRemove(node, treeSearch(node, 3));
     inOrder(node);
     printf("\n");
 
