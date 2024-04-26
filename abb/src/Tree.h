@@ -7,7 +7,7 @@ typedef struct sNode {
 } Node;
 
 Node* createNode(int aKey);
-void insertNode(Node* aNode, Node* aTree);
+Node* insertNode(Node* aNode, Node* aTree);
 void orderTree(Node* aTree);
 int getHeight(Node* aNode);
 void fixLeftLeft(Node*);
