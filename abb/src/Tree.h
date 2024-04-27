@@ -1,20 +1,17 @@
+#ifndef Tree_h
+#define Trre_h
+
 typedef struct sNode {
     int key;
+    struct sNode *left;
+    struct sNode *right;
+    int count;
     int height;
-    struct sNode* parent;
-    struct sNode* left;
-    struct sNode* right;
 } Node;
 
-Node* createNode(int aKey);
-Node* insertNode(Node* aNode, Node* aTree);
-void orderTree(Node* aTree);
-int getHeight(Node* aNode);
-void fixLeftLeft(Node*);
-void fixRightRight(Node*);
-void fixLeftRight(Node*);
-void fixRightLeft(Node*);
-void inOrder(Node* aNode);
-void removeNode(Node* aNode);
-Node* searchNode(int aKey);
-void freeTree(Node* aNode);
+Node *insertNode(Node *node, int key);
+void printPreOrder(Node *root);
+void printInOrder(Node *root);
+Node *deleteNode(Node *root, int key);
+
+#endif
