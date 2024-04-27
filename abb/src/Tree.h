@@ -13,5 +13,8 @@ Node *insertNode(Node *node, int key);
 void printPreOrder(Node *root);
 void printInOrder(Node *root);
 Node *deleteNode(Node *root, int key);
+Node *rightRotate(Node *y);
+Node *leftRotate(Node *x);
+int getBalance(Node *aNode);
 
 #endif

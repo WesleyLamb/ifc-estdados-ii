@@ -2,25 +2,27 @@
 
 #include "src/Tree.h"
 
-int main() {
-  Node *root = NULL;
+int main()
+{
+    Node *root = NULL;
 
-  root = insertNode(root, 2);
-//   root = insertNode(root, 1);
-//   root = insertNode(root, 7);
-//   root = insertNode(root, 4);
-//   root = insertNode(root, 5);
-//   root = insertNode(root, 3);
-//   root = insertNode(root, 8);
+    root = insertNode(root, 2);
+    root = insertNode(root, 1);
+    root = insertNode(root, 0);
+    // root = insertNode(root, 7);
+    //   root = insertNode(root, 4);
+    //   root = insertNode(root, 5);
+    //   root = insertNode(root, 3);
+    //   root = insertNode(root, 8);
 
-  printInOrder(root);
+    printInOrder(root);
 
-//   root = deleteNode(root, 3);
+    //   root = deleteNode(root, 3);
 
-//   printf("\nAfter deletion: ");
-//   printPreOrder(root);
+    //   printf("\nAfter deletion: ");
+    //   printPreOrder(root);
 
-  return 0;
+    return 0;
 }
 
 // int main() {

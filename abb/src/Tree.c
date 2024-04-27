@@ -4,7 +4,51 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Create Node
+void balanceTree(Node* aNode) {
+    // int balance = getBalance(aNode);
+    // // Se > 1, significa que a árvore está desbalanceada à esquerda
+    // if (balance > 1) {
+    //     if (aKey < aNode->left->key) {
+    //         // Desbalanceamento LL
+    //         return rightRotate(aNode);
+    //     } else if (aKey > aNode->left->key) {
+    //         // Desbalanceamento LR
+    //         aNode->left = leftRotate(aNode->left);
+    //         return rightRotate(aNode);
+    //     }
+    // }
+
+    // // Se < -1, significa que a árvore está desbalanceada à direita
+    // if (balance < -1) {
+    //     if (aKey > aNode->right->key) {
+    //         // Desbalanceamento RR
+    //         return leftRotate(aNode);
+    //     } else if (aKey < aNode->right->key) {
+    //         // Desbalanceamento RL
+    //         aNode->right = rightRotate(aNode->right);
+    //         return leftRotate(aNode);
+    //     }
+    // }
+
+    int balance = getBalance(aNode);
+    if (balance > 1 && getBalance(aNode->left) >= 0)
+        rightRotate(aNode);
+
+    if (balance > 1 && getBalance(aNode->left) < 0)
+    {
+        aNode->left = leftRotate(aNode->left);
+        rightRotate(aNode);
+    }
+
+    if (balance < -1 && getBalance(aNode->right) <= 0)
+        leftRotate(aNode);
+
+    if (balance < -1 && getBalance(aNode->right) > 0)
+    {
+        aNode->right = rightRotate(aNode->right);
+        leftRotate(aNode);
+    }
+}
 
 int max(int a, int b);
 
@@ -35,13 +79,31 @@ Node *newNode(int key)
 }
 
 // Right rotate
+/** Diagrama de entrada da árvore
+ *              p
+ *              |
+ *              y
+ *            /  \
+ *          x   alpha
+ *        /  \
+ *     gamma beta
+ *
+ *  Diagrama de saída da árvore
+ *              p
+ *              |
+ *              x
+ *            /  \
+ *         gamma  y
+ *              /  \
+ *           beta alpha
+*/
 Node *rightRotate(Node *y)
 {
     Node *x = y->left;
-    Node *T2 = x->right;
+    Node *beta = x->right;
 
     x->right = y;
-    y->left = T2;
+    y->left = beta;
 
     y->height = max(height(y->left), height(y->right)) + 1;
     x->height = max(height(x->left), height(x->right)) + 1;
@@ -49,14 +111,33 @@ Node *rightRotate(Node *y)
     return x;
 }
 
+
 // Left rotate
+/** Diagrama da árvore
+ *              p
+ *              |
+ *              x
+ *            /  \
+ *         alpha  y
+ *              /  \
+ *            beta gamma
+ *
+ *  Diagrama de saída da árvore
+ *              p
+ *              |
+ *              y
+ *            /  \
+ *          x   gamma
+ *        /  \
+ *     alpha beta
+*/
 Node *leftRotate(Node *x)
 {
     Node *y = x->right;
-    Node *T2 = y->left;
+    Node *beta = y->left;
 
     y->left = x;
-    x->right = T2;
+    x->right = beta;
 
     x->height = max(height(x->left), height(x->right)) + 1;
     y->height = max(height(y->left), height(y->right)) + 1;
@@ -65,55 +146,40 @@ Node *leftRotate(Node *x)
 }
 
 // Get the balance factor
-int getBalance(Node *N)
+int getBalance(Node *aNode)
 {
-    if (N == NULL)
+    if (aNode == NULL)
         return 0;
-    return height(N->left) - height(N->right);
+    return height(aNode->left) - height(aNode->right);
 }
 
 // Insert node
-Node *insertNode(Node *node, int key)
+Node *insertNode(Node *aNode, int aKey)
 {
-    // Find the correct position to insertNode the node and insertNode it
-    if (node == NULL)
-        return (newNode(key));
+    // Como a função é recursiva, se o nó onde eu quero inserir é nulo,
+    // retorno um novo nó
+    if (aNode == NULL)
+        return (newNode(aKey));
 
-    if (key < node->key)
-        node->left = insertNode(node->left, key);
-    else if (key > node->key)
-        node->right = insertNode(node->right, key);
+    if (aKey < aNode->key)
+        aNode->left = insertNode(aNode->left, aKey);
+    else if (aKey > aNode->key)
+        aNode->right = insertNode(aNode->right, aKey);
     else
     {
-        node->count++;
-        return node;
+        // Como só adicionei +1 ao count do registro,
+        // não alterou a estrutura da árvore
+        aNode->count++;
+        return aNode;
     }
 
-    // Update the balance factor of each node and
-    // Balance the tree
-    node->height = 1 + max(height(node->left),
-                           height(node->right));
+    // Atualiza o height para facilitar o cálculo do balanceamento
+    aNode->height = 1 + max(height(aNode->left),
+                           height(aNode->right));
 
-    int balance = getBalance(node);
-    if (balance > 1 && key < node->left->key)
-        return rightRotate(node);
+    balanceTree(aNode);
 
-    if (balance < -1 && key > node->right->key)
-        return leftRotate(node);
-
-    if (balance > 1 && key > node->left->key)
-    {
-        node->left = leftRotate(node->left);
-        return rightRotate(node);
-    }
-
-    if (balance < -1 && key < node->right->key)
-    {
-        node->right = rightRotate(node->right);
-        return leftRotate(node);
-    }
-
-    return node;
+    return aNode;
 }
 
 Node *minValueNode(Node *node)
@@ -172,24 +238,7 @@ Node *deleteNode(Node *root, int key)
     root->height = 1 + max(height(root->left),
                            height(root->right));
 
-    int balance = getBalance(root);
-    if (balance > 1 && getBalance(root->left) >= 0)
-        return rightRotate(root);
-
-    if (balance > 1 && getBalance(root->left) < 0)
-    {
-        root->left = leftRotate(root->left);
-        return rightRotate(root);
-    }
-
-    if (balance < -1 && getBalance(root->right) <= 0)
-        return leftRotate(root);
-
-    if (balance < -1 && getBalance(root->right) > 0)
-    {
-        root->right = rightRotate(root->right);
-        return leftRotate(root);
-    }
+    balanceTree(root);
 
     return root;
 }
@@ -210,7 +259,7 @@ void printInOrder(Node *root)
     if (NULL != root)
     {
         printInOrder(root->left);
-        printf("%d: %d ", root->key, root->count);
+        printf("%d ", root->key);
         printInOrder(root->right);
     }
 }
