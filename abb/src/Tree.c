@@ -73,6 +73,7 @@ Node *newNode(int key)
     node->key = key;
     node->left = NULL;
     node->right = NULL;
+    node->parent = NULL;
     node->height = 1;
     node->count = 1;
     return (node);
@@ -104,6 +105,9 @@ Node *rightRotate(Node *y)
 
     x->right = y;
     y->left = beta;
+
+    x->parent = y->parent;
+    y->parent = x;
 
     y->height = max(height(y->left), height(y->right)) + 1;
     x->height = max(height(x->left), height(x->right)) + 1;
@@ -139,6 +143,9 @@ Node *leftRotate(Node *x)
     y->left = x;
     x->right = beta;
 
+    y->parent = x->parent;
+    x->parent = y;
+
     x->height = max(height(x->left), height(x->right)) + 1;
     y->height = max(height(y->left), height(y->right)) + 1;
 
@@ -153,20 +160,31 @@ int getBalance(Node *aNode)
     return height(aNode->left) - height(aNode->right);
 }
 
+Node* insertNode(Node *aNode, int aKey) {
+    aNode = __insertNode(aNode, aKey);
+    while (NULL != aNode->parent) {
+        aNode = aNode->parent;
+    }
+    return aNode;
+}
+
 // Insert node
-Node *insertNode(Node *aNode, int aKey)
+Node *__insertNode(Node *aNode, int aKey)
 {
     // Como a função é recursiva, se o nó onde eu quero inserir é nulo,
     // retorno um novo nó
-    if (aNode == NULL)
-        return (newNode(aKey));
+    if (aNode == NULL) {
+        return newNode(aKey);
+    }
 
-    if (aKey < aNode->key)
-        aNode->left = insertNode(aNode->left, aKey);
-    else if (aKey > aNode->key)
-        aNode->right = insertNode(aNode->right, aKey);
-    else
-    {
+    if (aKey < aNode->key) {
+        aNode->left = __insertNode(aNode->left, aKey);
+        aNode->left->parent = aNode;
+    }
+    else if (aKey > aNode->key) {
+        aNode->right = __insertNode(aNode->right, aKey);
+        aNode->right->parent = aNode;
+    } else {
         // Como só adicionei +1 ao count do registro,
         // não alterou a estrutura da árvore
         aNode->count++;
@@ -259,7 +277,7 @@ void printInOrder(Node *root)
     if (NULL != root)
     {
         printInOrder(root->left);
-        printf("%d ", root->key);
+        printf("%d:%d ", root->key, root->height);
         printInOrder(root->right);
     }
 }
