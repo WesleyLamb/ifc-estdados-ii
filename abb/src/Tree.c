@@ -1,283 +1,160 @@
 #include "Tree.h"
-// AVL tree implementation in C
-
 #include <stdio.h>
 #include <stdlib.h>
 
-void balanceTree(Node* aNode) {
-    // int balance = getBalance(aNode);
-    // // Se > 1, significa que a árvore está desbalanceada à esquerda
-    // if (balance > 1) {
-    //     if (aKey < aNode->left->key) {
-    //         // Desbalanceamento LL
-    //         return rightRotate(aNode);
-    //     } else if (aKey > aNode->left->key) {
-    //         // Desbalanceamento LR
-    //         aNode->left = leftRotate(aNode->left);
-    //         return rightRotate(aNode);
-    //     }
-    // }
+void __insertNode(Node* aRoot, Node* aNode);
+Node* __searchTree(Node* aRoot, int aKey);
+void __balanceTree(Node* aNode);
+int __getBalance(Node* aNode);
+int __getHeight(Node* aNode);
+int __max(int a, int b);
+void __balanceLL(Node* aNode);
+void __balanceLR(Node* aNode);
+void __balanceRR(Node* aNode);
+void __balanceRL(Node* aNode);
+void __rotateLeft(Node* aNode);
+void __rotateRight(Node* aNode);
 
-    // // Se < -1, significa que a árvore está desbalanceada à direita
-    // if (balance < -1) {
-    //     if (aKey > aNode->right->key) {
-    //         // Desbalanceamento RR
-    //         return leftRotate(aNode);
-    //     } else if (aKey < aNode->right->key) {
-    //         // Desbalanceamento RL
-    //         aNode->right = rightRotate(aNode->right);
-    //         return leftRotate(aNode);
-    //     }
-    // }
-
-    int balance = getBalance(aNode);
-    if (balance > 1 && getBalance(aNode->left) >= 0)
-        rightRotate(aNode);
-
-    if (balance > 1 && getBalance(aNode->left) < 0)
-    {
-        aNode->left = leftRotate(aNode->left);
-        rightRotate(aNode);
-    }
-
-    if (balance < -1 && getBalance(aNode->right) <= 0)
-        leftRotate(aNode);
-
-    if (balance < -1 && getBalance(aNode->right) > 0)
-    {
-        aNode->right = rightRotate(aNode->right);
-        leftRotate(aNode);
-    }
-}
-
-int max(int a, int b);
-
-// Calculate height
-int height(Node *N)
-{
-    if (N == NULL)
-        return 0;
-    return N->height;
-}
-
-int max(int a, int b)
-{
-    return (a > b) ? a : b;
-}
-
-// Create a node
-Node *newNode(int key)
-{
-    Node *node = (Node *)
-        malloc(sizeof(Node));
-    node->key = key;
-    node->left = NULL;
-    node->right = NULL;
-    node->parent = NULL;
-    node->height = 1;
-    node->count = 1;
-    return (node);
-}
-
-// Right rotate
-/** Diagrama de entrada da árvore
- *              p
- *              |
- *              y
- *            /  \
- *          x   alpha
- *        /  \
- *     gamma beta
- *
- *  Diagrama de saída da árvore
- *              p
- *              |
- *              x
- *            /  \
- *         gamma  y
- *              /  \
- *           beta alpha
-*/
-Node *rightRotate(Node *y)
-{
-    Node *x = y->left;
-    Node *beta = x->right;
-
-    x->right = y;
-    y->left = beta;
-
-    x->parent = y->parent;
-    y->parent = x;
-
-    y->height = max(height(y->left), height(y->right)) + 1;
-    x->height = max(height(x->left), height(x->right)) + 1;
-
-    return x;
-}
-
-
-// Left rotate
-/** Diagrama da árvore
- *              p
- *              |
- *              x
- *            /  \
- *         alpha  y
- *              /  \
- *            beta gamma
- *
- *  Diagrama de saída da árvore
- *              p
- *              |
- *              y
- *            /  \
- *          x   gamma
- *        /  \
- *     alpha beta
-*/
-Node *leftRotate(Node *x)
-{
-    Node *y = x->right;
-    Node *beta = y->left;
-
-    y->left = x;
-    x->right = beta;
-
-    y->parent = x->parent;
-    x->parent = y;
-
-    x->height = max(height(x->left), height(x->right)) + 1;
-    y->height = max(height(y->left), height(y->right)) + 1;
-
-    return y;
-}
-
-// Get the balance factor
-int getBalance(Node *aNode)
-{
-    if (aNode == NULL)
-        return 0;
-    return height(aNode->left) - height(aNode->right);
-}
-
-Node* insertNode(Node *aNode, int aKey) {
-    aNode = __insertNode(aNode, aKey);
-    while (NULL != aNode->parent) {
-        aNode = aNode->parent;
-    }
-    return aNode;
-}
-
-// Insert node
-Node *__insertNode(Node *aNode, int aKey)
-{
-    // Como a função é recursiva, se o nó onde eu quero inserir é nulo,
-    // retorno um novo nó
-    if (aNode == NULL) {
-        return newNode(aKey);
-    }
-
-    if (aKey < aNode->key) {
-        aNode->left = __insertNode(aNode->left, aKey);
-        aNode->left->parent = aNode;
-    }
-    else if (aKey > aNode->key) {
-        aNode->right = __insertNode(aNode->right, aKey);
-        aNode->right->parent = aNode;
+Node* insertNode(Node* aRoot, int aKey) {
+    // Procura o nó na árvore;
+    Node* helper = __searchTree(aRoot, aKey);
+    if (NULL == helper  || NULL == aRoot) {
+        // Se não achou, cria um novo nó e o adiciona à árvore
+        __insertNode(aRoot, createNode(aKey));
     } else {
-        // Como só adicionei +1 ao count do registro,
-        // não alterou a estrutura da árvore
+        // Senão, só incrementa o count
+        helper->count++;
+    }
+    while (NULL != aRoot->parent) {
+        // Procura o novo root
+        aRoot = aRoot->parent;
+    }
+    return aRoot;
+}
+
+Node* createNode(int aKey) {
+    Node* newNode = malloc(sizeof(Node));
+    newNode->count = 1;
+    newNode->height = 1;
+    newNode->key = aKey;
+    newNode->left = NULL;
+    newNode->parent = NULL;
+    newNode->right = NULL;
+
+    return newNode;
+}
+
+void __insertNode(Node* aRoot, Node* aNode) {
+    if (NULL == aRoot) {
+        aRoot = aNode;
+        return;
+    }
+
+    if (aNode->key > aRoot->key) {
+        if (NULL != aRoot->right) {
+            __insertNode(aRoot->right, aNode);
+        } else {
+            aRoot->right = aNode;
+            aRoot->right->parent = aRoot;
+        }
+    } else if (aNode->key < aRoot->key) {
+        if (NULL != aRoot->left) {
+            __insertNode(aRoot->left, aNode);
+        } else {
+            aRoot->left = aNode;
+            aRoot->left->parent = aRoot;
+        }
+    } else {
         aNode->count++;
-        return aNode;
+        return;
     }
 
-    // Atualiza o height para facilitar o cálculo do balanceamento
-    aNode->height = 1 + max(height(aNode->left),
-                           height(aNode->right));
+    aNode->height = __max(__getHeight(aNode->left), __getHeight(aNode->right));
 
-    balanceTree(aNode);
-
-    return aNode;
+    __balanceTree(aNode);
 }
 
-Node *minValueNode(Node *node)
-{
-    Node *current = node;
-
-    while (current->left != NULL)
-        current = current->left;
-
-    return current;
+int __max(int a, int b) {
+    if (a > b)
+        return a;
+    return b;
 }
 
-// Delete a nodes
-Node *deleteNode(Node *root, int key)
-{
-    // Find the node and delete it
-    if (root == NULL)
-        return root;
+int __getHeight(Node* aNode) {
+    if (NULL == aNode)
+        return 0;
+    return aNode->height;
+}
 
-    if (key < root->key)
-        root->left = deleteNode(root->left, key);
+int __getBalance(Node* aNode) {
+    return __getHeight(aNode->left) - __getHeight(aNode->right);
+}
 
-    else if (key > root->key)
-        root->right = deleteNode(root->right, key);
+void __balanceTree(Node* aNode) {
+    int balance = __getBalance(aNode);
 
-    else
-    {
-        if ((root->left == NULL) || (root->right == NULL))
-        {
-            Node *temp = root->left ? root->left : root->right;
-
-            if (temp == NULL)
-            {
-                temp = root;
-                root = NULL;
-            }
-            else
-                *root = *temp;
-            free(temp);
+    if (balance > 1) {
+        // Pendendo para esquerda
+        if (__getBalance(aNode->left) >= 0) {
+            __balanceLL(aNode);
+        } else {
+            __balanceLR(aNode);
         }
-        else
-        {
-            Node *temp = minValueNode(root->right);
-
-            root->key = temp->key;
-
-            root->right = deleteNode(root->right, temp->key);
+    } else if (balance < 1) {
+        if (__getBalance(aNode->right) >= 0) {
+            __balanceRR(aNode);
+        } else {
+            __balanceRL(aNode);
         }
     }
-
-    if (root == NULL)
-        return root;
-
-    // Update the balance factor of each node and
-    // balance the tree
-    root->height = 1 + max(height(root->left),
-                           height(root->right));
-
-    balanceTree(root);
-
-    return root;
 }
 
-// Print the tree
-void printPreOrder(Node *root)
-{
-    if (root != NULL)
-    {
-        printf("%d ", root->key);
-        printPreOrder(root->left);
-        printPreOrder(root->right);
+void __balanceLL(Node* aNode) {
+    __rotateLeft(aNode);
+}
+
+void __balanceLR(Node* aNode) {
+    __rotateLeft(aNode->left);
+    __rotateRight(aNode);
+}
+
+void __balanceRR(Node* aNode) {
+    __rotateRight(aNode);
+}
+
+void __balanceRL(Node* aNode) {
+    __rotateRight(aNode->right);
+    __rotateLeft(aNode);
+}
+
+void printPreOrder(Node* aRoot) {
+    printf("%d", aRoot->key);
+
+    if (NULL != aRoot->left)
+        printPreOrder(aRoot->left);
+
+    if (NULL != aRoot->right)
+        printPreOrder(aRoot->right);
+}
+
+Node* __searchTree(Node* aRoot, int aKey) {
+    if (NULL == aRoot || aRoot->key == aKey) {
+        return aRoot;
+    } else if (aKey > aRoot->key) {
+        if (NULL != aRoot->right)
+            return __searchTree(aRoot->right, aKey);
+        return NULL;
+    } else {
+        if (NULL != aRoot->left)
+            return __searchTree(aRoot->left, aKey);
+        return NULL;
     }
 }
 
-void printInOrder(Node *root)
-{
-    if (NULL != root)
-    {
-        printInOrder(root->left);
-        printf("%d:%d ", root->key, root->height);
-        printInOrder(root->right);
-    }
+void __rotateLeft(Node* aNode) {
+
+}
+
+void __rotateRight(Node* aNode) {
+
 }

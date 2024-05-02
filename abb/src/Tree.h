@@ -10,13 +10,14 @@ typedef struct sNode {
     int height;
 } Node;
 
-Node *insertNode(Node *node, int key);
-Node *__insertNode(Node *node, int key);
+Node* insertNode(Node *root, int aKey);
+Node* createNode(int aKey);
+
 void printPreOrder(Node *root);
-void printInOrder(Node *root);
-Node *deleteNode(Node *root, int key);
-Node *rightRotate(Node *y);
-Node *leftRotate(Node *x);
-int getBalance(Node *aNode);
+// void printInOrder(Node *root);
+// Node *deleteNode(Node *root, int key);
+// Node *rightRotate(Node *y);
+// Node *leftRotate(Node *x);
+// int getBalance(Node *aNode);
 
 #endif

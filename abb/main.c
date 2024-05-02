@@ -10,12 +10,12 @@ int main()
     root = insertNode(root, 1);
     root = insertNode(root, 0);
     root = insertNode(root, 7);
-    //   root = insertNode(root, 4);
+    root = insertNode(root, 4);
     //   root = insertNode(root, 5);
     //   root = insertNode(root, 3);
     //   root = insertNode(root, 8);
 
-    printInOrder(root);
+    printPreOrder(root);
 
     //   root = deleteNode(root, 3);
 
