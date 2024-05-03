@@ -8,19 +8,18 @@ int main()
 
     root = insertNode(root, 2);
     root = insertNode(root, 1);
-    root = insertNode(root, 0);
     root = insertNode(root, 7);
     root = insertNode(root, 4);
-    //   root = insertNode(root, 5);
-    //   root = insertNode(root, 3);
-    //   root = insertNode(root, 8);
+    root = insertNode(root, 5);
+    root = insertNode(root, 3);
+    root = insertNode(root, 8);
 
     printPreOrder(root);
 
-    //   root = deleteNode(root, 3);
+    root = deleteNode(root, 3);
 
-    //   printf("\nAfter deletion: ");
-    //   printPreOrder(root);
+    printf("\nAfter deletion: ");
+    printPreOrder(root);
 
     return 0;
 }

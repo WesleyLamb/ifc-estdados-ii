@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int max(int a, int b) {
+int __max(int a, int b) {
     if (a > b)
         return a;
     return b;
@@ -78,7 +78,7 @@ void insertNode(int aKey, Node *aTree)
 
 int getHeight(Node *aNode) {
     if ((NULL != aNode->left) && (NULL != aNode->right)) {
-        return 1 + max(getHeight(aNode->left), getHeight(aNode->right));
+        return 1 + __max(getHeight(aNode->left), getHeight(aNode->right));
     } else if (NULL != aNode->left) {
         return 1 + getHeight(aNode->left);
     } else if (NULL != aNode->right) {

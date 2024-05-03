@@ -1,23 +1,19 @@
 #ifndef Tree_h
-#define Trre_h
+#define Tree_h
+
 
 typedef struct sNode {
-    int key;
-    struct sNode *left;
-    struct sNode *right;
-    struct sNode *parent;
-    int count;
-    int height;
+  int key;
+  struct sNode *left;
+  struct sNode *right;
+  int height;
+  int count;
 } Node;
 
-Node* insertNode(Node *root, int aKey);
-Node* createNode(int aKey);
-
-void printPreOrder(Node *root);
-// void printInOrder(Node *root);
-// Node *deleteNode(Node *root, int key);
-// Node *rightRotate(Node *y);
-// Node *leftRotate(Node *x);
-// int getBalance(Node *aNode);
+Node* insertNode(Node*, int);
+Node *deleteNode(Node *, int);
+void printPreOrder(Node *);
+void printInOrder(Node *);
+void printPostOrder(Node *);
 
 #endif

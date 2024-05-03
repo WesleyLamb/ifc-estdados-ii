@@ -5,27 +5,27 @@
 #include <stdlib.h>
 
 void balanceTree(Node* aNode) {
-    int balance = getBalance(aNode);
+    int balance = __getBalance(aNode);
 
     if (balance > 1) {
         // Se > 1, significa que a árvore está desbalanceada à esquerda
-        if (getBalance(aNode->left->key) >= 0) {
+        if (__getBalance(aNode->left->key) >= 0) {
             // Desbalanceamento LL
-            rightRotate(aNode);
-        } else if (getBalance(aNode->left) < 0) {
+            __rightRotate(aNode);
+        } else if (__getBalance(aNode->left) < 0) {
             // Desbalanceamento LR
-            aNode->left = leftRotate(aNode->left);
-            rightRotate(aNode);
+            aNode->left = __leftRotate(aNode->left);
+            __rightRotate(aNode);
         }
     } else if (balance < -1) {
         // Se < -1, significa que a árvore está desbalanceada à direita
-        if (getBalance(aNode->right) >= 0) {
+        if (__getBalance(aNode->right) >= 0) {
             // Desbalanceamento RR
-            leftRotate(aNode);
-        } else if (getBalance(aNode->right) < 0) {
+            __leftRotate(aNode);
+        } else if (__getBalance(aNode->right) < 0) {
             // Desbalanceamento RL
-            aNode->right = rightRotate(aNode->right);
-            leftRotate(aNode);
+            aNode->right = __rightRotate(aNode->right);
+            __leftRotate(aNode);
         }
     }
 
@@ -49,7 +49,7 @@ void balanceTree(Node* aNode) {
     // }
 }
 
-int max(int a, int b);
+int __max(int a, int b);
 
 // Calculate height
 int height(Node *N)
@@ -59,13 +59,13 @@ int height(Node *N)
     return N->height;
 }
 
-int max(int a, int b)
+int __max(int a, int b)
 {
     return (a > b) ? a : b;
 }
 
 // Create a node
-Node *newNode(int key)
+Node *__newNode(int key)
 {
     Node *node = (Node *)
         malloc(sizeof(Node));
@@ -97,7 +97,7 @@ Node *newNode(int key)
  *              /  \
  *           beta alpha
 */
-Node *rightRotate(Node *y)
+Node *__rightRotate(Node *y)
 {
     Node *x = y->left;
     Node *beta = x->right;
@@ -108,8 +108,8 @@ Node *rightRotate(Node *y)
     x->parent = y->parent;
     y->parent = x;
 
-    y->height = max(height(y->left), height(y->right)) + 1;
-    x->height = max(height(x->left), height(x->right)) + 1;
+    y->height = __max(height(y->left), height(y->right)) + 1;
+    x->height = __max(height(x->left), height(x->right)) + 1;
 
     return x;
 }
@@ -134,7 +134,7 @@ Node *rightRotate(Node *y)
  *        /  \
  *     alpha beta
 */
-Node *leftRotate(Node *x)
+Node *__leftRotate(Node *x)
 {
     Node *y = x->right;
     Node *beta = y->left;
@@ -145,14 +145,14 @@ Node *leftRotate(Node *x)
     y->parent = x->parent;
     x->parent = y;
 
-    x->height = max(height(x->left), height(x->right)) + 1;
-    y->height = max(height(y->left), height(y->right)) + 1;
+    x->height = __max(height(x->left), height(x->right)) + 1;
+    y->height = __max(height(y->left), height(y->right)) + 1;
 
     return y;
 }
 
 // Get the balance factor
-int getBalance(Node *aNode)
+int __getBalance(Node *aNode)
 {
     if (aNode == NULL)
         return 0;
@@ -168,12 +168,12 @@ Node* insertNode(Node *aNode, int aKey) {
 }
 
 // Insert node
-Node *__insertNode(Node *aNode, int aKey)
+Node *insertNode(Node *aNode, int aKey)
 {
     // Como a função é recursiva, se o nó onde eu quero inserir é nulo,
     // retorno um novo nó
     if (aNode == NULL) {
-        return newNode(aKey);
+        return __newNode(aKey);
     }
 
     if (aKey < aNode->key) {
@@ -191,7 +191,7 @@ Node *__insertNode(Node *aNode, int aKey)
     }
 
     // Atualiza o height para facilitar o cálculo do balanceamento
-    aNode->height = 1 + max(height(aNode->left),
+    aNode->height = 1 + __max(height(aNode->left),
                            height(aNode->right));
 
     balanceTree(aNode);
@@ -199,7 +199,7 @@ Node *__insertNode(Node *aNode, int aKey)
     return aNode;
 }
 
-Node *minValueNode(Node *node)
+Node *__minValueNode(Node *node)
 {
     Node *current = node;
 
@@ -239,7 +239,7 @@ Node *deleteNode(Node *root, int key)
         }
         else
         {
-            Node *temp = minValueNode(root->right);
+            Node *temp = __minValueNode(root->right);
 
             root->key = temp->key;
 
@@ -252,7 +252,7 @@ Node *deleteNode(Node *root, int key)
 
     // Update the balance factor of each node and
     // balance the tree
-    root->height = 1 + max(height(root->left),
+    root->height = 1 + __max(height(root->left),
                            height(root->right));
 
     balanceTree(root);
