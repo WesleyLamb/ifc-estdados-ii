@@ -2,10 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int __max(int, int);
+float __max(float, float);
 int __height(Node *);
 Node *__minValueNode(Node *);
-Node *__newNode(int);
+Node *__newNode(float);
 Node *__rightRotate(Node *);
 Node *__leftRotate(Node *);
 int __getBalance(Node *);
@@ -19,7 +19,7 @@ int __height(Node *aNode)
     return aNode->height;
 }
 
-int __max(int a, int b)
+float __max(float a, float b)
 {
     if (a > b)
         return a;
@@ -28,7 +28,7 @@ int __max(int a, int b)
 }
 
 // Create a aNode
-Node *__newNode(int aKey)
+Node *__newNode(float aKey)
 {
     Node *aNode = malloc(sizeof(Node));
     aNode->key = aKey;
@@ -114,7 +114,7 @@ int __getBalance(Node *aNode)
 }
 
 
-Node *insertNode(Node *aNode, int aKey)
+Node *insertNode(Node *aNode, float aKey)
 {
 
     if (aNode == NULL) {
@@ -203,7 +203,7 @@ Node *__minValueNode(Node *aNode)
 }
 
 // Delete um nó
-Node *deleteNode(Node *aRoot, int aKey)
+Node *deleteNode(Node *aRoot, float aKey)
 {
     if (aRoot == NULL) {
         // Se a árvore está vazia ou o nó não existe
@@ -260,26 +260,60 @@ Node *deleteNode(Node *aRoot, int aKey)
         return aRoot;
      }
 
-    // Update the balance factor of each aNode and
-    // balance the tree
+    // Atualizo o height do galho
     aRoot->height = 1 + __max(__height(aRoot->left),
                              __height(aRoot->right));
 
+    // Balanceio o galho
     int balance = __getBalance(aRoot);
     if (balance > 1 && __getBalance(aRoot->left) >= 0)
+        // Se está pendendo à esquerda e é um desbalanceamento LL, rotaciono à direita
+        /**
+         *          p
+         *        /
+         *      y
+         *    /
+         *  x
+        */
         return __rightRotate(aRoot);
 
     if (balance > 1 && __getBalance(aRoot->left) < 0)
     {
+        // Se está pendendo à esquerda e é um desbalanceamento LR,
+        // rotaciono à esquerda e depois à direita
+        /**
+         *  p
+         *   \
+         *    x
+         *   /
+         * y
+        */
         aRoot->left = __leftRotate(aRoot->left);
         return __rightRotate(aRoot);
     }
 
     if (balance < -1 && __getBalance(aRoot->right) <= 0)
+        // Se está pendendo à direita e é um desbalanceamento RR, rotaciono à esquerda
+        /**
+         *  p
+         *   \
+         *    x
+         *     \
+         *      y
+        */
         return __leftRotate(aRoot);
 
     if (balance < -1 && __getBalance(aRoot->right) > 0)
     {
+        // Se está pendendo à direita e é um desbalanceamento RL,
+        // rotaciono à direita e depois à esquerda
+        /**
+         *          p
+         *        /
+         *      y
+         *       \
+         *        x
+        */
         aRoot->right = __rightRotate(aRoot->right);
         return __leftRotate(aRoot);
     }
@@ -291,7 +325,7 @@ void printPreOrder(Node *aRoot)
 {
     if (aRoot != NULL)
     {
-        printf("%d ", aRoot->key);
+        printf("%.2f ", aRoot->key);
         printPreOrder(aRoot->left);
         printPreOrder(aRoot->right);
     }
@@ -301,7 +335,7 @@ void printInOrder(Node* aRoot) {
     if (aRoot != NULL)
     {
         printInOrder(aRoot->left);
-        printf("%d ", aRoot->key);
+        printf("%.2f ", aRoot->key);
         printInOrder(aRoot->right);
     }
 }
@@ -311,6 +345,6 @@ void printPostOrder(Node* aRoot) {
     {
         printPostOrder(aRoot->left);
         printPostOrder(aRoot->right);
-        printf("%d ", aRoot->key);
+        printf("%.2f ", aRoot->key);
     }
 }
