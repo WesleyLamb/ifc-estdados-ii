@@ -282,11 +282,11 @@ Node *deleteNode(Node *aRoot, float aKey)
         // Se está pendendo à esquerda e é um desbalanceamento LR,
         // rotaciono à esquerda e depois à direita
         /**
-         *  p
-         *   \
-         *    x
-         *   /
-         * y
+         *   p
+         *  /
+         * x
+         *  \
+         *   y
         */
         aRoot->left = __leftRotate(aRoot->left);
         return __rightRotate(aRoot);
@@ -309,9 +309,9 @@ Node *deleteNode(Node *aRoot, float aKey)
         // rotaciono à direita e depois à esquerda
         /**
          *          p
-         *        /
-         *      y
-         *       \
+         *           \
+         *            y
+         *          /
          *        x
         */
         aRoot->right = __rightRotate(aRoot->right);
