@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "stdio.h": "c",
+        "tree.h": "c",
+        "orderedlist.h": "c",
+        "hnode.h": "c"
+    }
+}

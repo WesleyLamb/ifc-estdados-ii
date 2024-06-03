@@ -8,6 +8,9 @@ typedef struct {
     int size;
 } OrderedList;
 
+OrderedList* createList();
 void insertNode(OrderedList* aList, Node* aNode);
+Node* removeNode(OrderedList* aList, Node* aNode);
+Node* searchNode(OrderedList* aList, char anInfo);
 
 #endif
